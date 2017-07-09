@@ -6,7 +6,8 @@ import './App.css'
 
 class BooksApp extends React.Component {
   state = {
-    books: []
+    books: [],
+      query: ''
   }
 
   componentDidMount() {
@@ -16,17 +17,38 @@ class BooksApp extends React.Component {
       });
   }
 
+    updateQuery = (query) => {
+        this.setState({ query: query.trim() })
+    }
 
+    goBack = () => {
+        window.history.back();
+    }
   render() {
+      const { query } = this.state;
 
     return (
       <div className="app">
         <Route exact path="/search" render={() => (
+            <div className='list-contacts-top'>
+              <div>
+                <div className="back-search-button"
+                     onClick={this.goBack}
 
-            <ListBooks
-                books={this.state.books}
+                ></div>
+                  <input
+                      className='search-books-bars'
+                      type='text'
+                      placeholder='Search books'
+                      value={query}
+                      onChange={(event) => this.updateQuery(event.target.value)}
+                  />
 
-            />
+              </div>
+              <ListBooks
+                  books={this.state.books}
+              />
+            </div>
 
         )}/>
         <Route exact path="/" render={() => (

@@ -38,6 +38,7 @@ class ListBooks extends Component {
         showingBooks.sort(sortBy('name'));
 
         return (
+
             <div className="list-books">
                 <div className="list-books-title">
                     <h1>Add Book</h1>
