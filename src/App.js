@@ -1,6 +1,8 @@
 import React from 'react';
 import { Route, Link  } from 'react-router-dom';
 import ListBooks from './ListBooks';
+import escapeRegExp from 'escape-string-regexp';
+import sortBy from 'sort-by';
 import * as BooksAPI from './BooksAPI'
 import './App.css'
 
@@ -13,19 +15,43 @@ class BooksApp extends React.Component {
   componentDidMount() {
       BooksAPI.getAll().then((books) => {
           this.setState({ books });
-          console.log(books);
+          // console.log(books);
       });
   }
 
     updateQuery = (query) => {
         this.setState({ query: query.trim() })
+        BooksAPI.search(query.trim(),10).then((books) => {
+
+            this.setState({ books });
+            console.log(books);
+
+        });
     }
 
     goBack = () => {
         window.history.back();
     }
   render() {
-      const { query } = this.state;
+      const { query, books } = this.state;
+
+      let showingBooks;
+      if(query){
+          const match =  new RegExp(escapeRegExp(query), 'i');
+          match ? console.log(match, 'this the match') : console.log('match fail')
+          try {
+              showingBooks = books.filter((book) => match.test(book.title));
+          }
+          catch(err) {
+            showingBooks=[];
+          }
+          console.log('true query',showingBooks)
+      }else {
+          showingBooks = books;
+      }
+
+      {query.length > 0 && (showingBooks.sort(sortBy('name')))}
+
 
     return (
       <div className="app">
@@ -46,7 +72,8 @@ class BooksApp extends React.Component {
 
               </div>
               <ListBooks
-                  books={this.state.books}
+                books = { showingBooks.length > 0 ? showingBooks : [] }
+                query = { query}
               />
             </div>
 
