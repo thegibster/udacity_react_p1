@@ -10,22 +10,24 @@ class ListBooks extends Component {
         books: PropTypes.array.isRequired
         // onDeleteBook: PropTypes.func.isRequired
     }
+    state = {
+        showNoResults : false
+    }
+
+    componentDidMount(){
+
+          if(this.props.books.length <= 0){
+              this.setState({ showNoResults: true})
+        }
+    }
 
 
-
-    // updateQuery = (query) => {
-    //     this.setState({ query: query.trim() })
-    // }
-    //
-    // clearQuery = () => {
-    //     this.setState({ query: '' })
-    // }
 
     render(){
 
         const { books } = this.props;
         const { query } = this.props;
-
+        const  { showNoResults } = this.state;
 
 
         return (
@@ -75,10 +77,10 @@ class ListBooks extends Component {
                 }
 
                 {
-                    (books.length == 0 && query) && (
+                    (showNoResults && query) && (
                     <div>
                      <h1>No Results Found</h1>
-                        <h2>Try Another Search Name</h2>
+
                     </div>
                     )
                 }
