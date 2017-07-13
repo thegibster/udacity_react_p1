@@ -9,12 +9,19 @@ import './App.css'
 class BooksApp extends React.Component {
   state = {
     books: [],
+      currentlyReading:[],
+      read:[],
+      wantToRead:[],
       query: ''
   }
 
   componentDidMount() {
       BooksAPI.getAll().then((books) => {
-          this.setState({ books });
+          this.setState({
+              currentlyReading: books.filter((book) => book.shelf==='currentlyReading'),
+              read: books.filter((book) => book.shelf==='read'),
+              wantToRead: books.filter((book) => book.shelf==='wantToRead')
+          });
           // console.log(books);
       });
   }
@@ -34,16 +41,37 @@ class BooksApp extends React.Component {
         const value = event.target.value;
         const name = target.name;
 
+
         this.setState({
-            [name]: value
+            [name]: value,
+
         });
     };
 
     goBack = () => {
         window.history.back();
     }
+
+    handleInputChange = (event) => {
+        const target = event.target;
+        const value = event.target.value;
+        const name = target.name;
+        console.log(target,value,name,);
+        BooksAPI.update(this.state.books.filter((book) => book.id ===  name),value)
+            .then((res) => console.log(res,'hahha'))
+        console.log(this.state.books.filter((book) => book.id ===  name))
+        // BooksAPI.getAll().then((books) => {
+        //     this.setState({ books });
+        //     // console.log(books);
+        // });
+        this.setState({
+            [name]: value
+
+        });
+    }
+
   render() {
-      const { query, books } = this.state;
+      const { query,books,read,wantToRead,currentlyReading } = this.state;
 
       let showingBooks;
       if(query){
@@ -99,15 +127,22 @@ class BooksApp extends React.Component {
                   <h2 className="bookshelf-title">Currently Reading</h2>
                   <div className="bookshelf-books">
                     <ol className="books-grid">
-
-                        {books.filter((book) => book.shelf === 'currentlyReading').map((book) => (
+                      <h1> {'wanna'}</h1>
+                        {`${"this.state."+"bubbly"+""}`}
+                        {currentlyReading.map((book) => (
                             <div key={book.id}>
+                                {`${"this.state."+[book.id]+""}`}
+
                               <li>
                                 <div className="book">
                                   <div className="book-top">
                                     <div className="book-cover" style={{ width: 128, height: 188, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
                                     <div className="book-shelf-changer">
-                                      <select>
+                                      <select
+                                          name={book.id}
+                                          onChange={this.handleInputChange}
+                                          value={`${"this.state."+[book.id]+""}`}
+                                      >
                                         <option value="none" disabled>Move to...</option>
                                         <option value="currentlyReading">Currently Reading</option>
                                         <option value="wantToRead">Want to Read</option>
@@ -129,14 +164,14 @@ class BooksApp extends React.Component {
                   <h2 className="bookshelf-title">Want to Read</h2>
                   <div className="bookshelf-books">
                     <ol className="books-grid">
-                        {books.filter((book) => book.shelf === 'wantToRead').map((book) => (
+                        {wantToRead.map((book) => (
                             <div key={book.id}>
                               <li>
                                 <div className="book">
                                   <div className="book-top">
                                     <div className="book-cover" style={{ width: 128, height: 188, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
                                     <div className="book-shelf-changer">
-                                      <select>
+                                      <select onChange={this.handleInputChange}>
                                         <option value="none" disabled>Move to...</option>
                                         <option value="currentlyReading">Currently Reading</option>
                                         <option value="wantToRead">Want to Read</option>
@@ -158,7 +193,7 @@ class BooksApp extends React.Component {
                   <h2 className="bookshelf-title">Read</h2>
                   <div className="bookshelf-books">
                     <ol className="books-grid">
-                        {books.filter((book) => book.shelf === 'read').map((book) => (
+                        {read.map((book) => (
                             <div key={book.id}>
                               <li>
                                 <div className="book">
