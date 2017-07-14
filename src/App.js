@@ -97,10 +97,13 @@ class BooksApp extends React.Component {
 
           this.setState({
               //add code to combine the seach array to the state of the app
-              books: this.state.books.concat(stateCopy),
-              currentlyReading: this.state.books.filter((book) => book.shelf==='currentlyReading'),
-              read: this.state.books.filter((book) => book.shelf==='read'),
-              wantToRead: this.state.books.filter((book) => book.shelf==='wantToRead')
+              books: this.state.books.concat(stateCopy)
+          }, () => {
+            this.setState({
+                  currentlyReading: this.state.books.filter((book) => book.shelf==='currentlyReading'),
+                  read: this.state.books.filter((book) => book.shelf==='read'),
+                  wantToRead: this.state.books.filter((book) => book.shelf==='wantToRead')
+            })
           });
 
 
