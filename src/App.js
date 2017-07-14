@@ -9,6 +9,7 @@ import './App.css'
 class BooksApp extends React.Component {
   state = {
     books: [],
+      queryBooks:[],
       currentlyReading:[],
       read:[],
       wantToRead:[],
@@ -31,7 +32,7 @@ class BooksApp extends React.Component {
         this.setState({ query: query.trim() })
         BooksAPI.search(query.trim(),10).then((books) => {
 
-            this.setState({ books });
+            this.setState({ queryBooks:books });
             console.log(books);
 
         });
@@ -50,8 +51,19 @@ class BooksApp extends React.Component {
     };
 
     goBack = () => {
+        this.setState({
+            query:''
+        })
         window.history.back();
     }
+
+    updateAppState = () => {
+      console.log()
+    }
+
+
+
+
 
     // const add = x => y => y + x;
     // shelfPicker = shelf =>   {
@@ -72,22 +84,45 @@ class BooksApp extends React.Component {
         // console.log(this.state.books.filter((book) => book.id ===  name))
 
         // let stateCopy = Object.assign({}, this.state.books);
-        console.log(this.state.read)
-        let stateCopy = this.state.books.map(book => book.id === name ?
-            // transform the book with a matching id
-            { ...book, shelf: value } :
-            // otherwise return original book
-            book
-        );
+        // console.log(this.state.read)
+        let stateCopy;
+      if(this.state.query.length >0){
+          stateCopy = this.state.queryBooks.filter((book) => book.id === name).map(book => book.id === name ?
+              // transform the book with a matching id
+              { ...book, shelf: value } :
+              // otherwise return original book
+              book
+
+          );
+
+          this.setState({
+              //add code to combine the seach array to the state of the app
+              books: this.state.books.concat(stateCopy),
+              currentlyReading: this.state.books.filter((book) => book.shelf==='currentlyReading'),
+              read: this.state.books.filter((book) => book.shelf==='read'),
+              wantToRead: this.state.books.filter((book) => book.shelf==='wantToRead')
+          });
+
+
+      }else {
+           stateCopy = this.state.books.map(book => book.id === name ?
+              // transform the book with a matching id
+              { ...book, shelf: value } :
+              // otherwise return original book
+              book
+          );
+
+          this.setState({
+              books: stateCopy,
+              currentlyReading: stateCopy.filter((book) => book.shelf==='currentlyReading'),
+              read: stateCopy.filter((book) => book.shelf==='read'),
+              wantToRead: stateCopy.filter((book) => book.shelf==='wantToRead')
+          });
+      }
         console.log(stateCopy,"cheese")
         // stateCopy.books[name] = Object.assign({}, stateCopy.books[name]);
         // stateCopy.books[name].shelf = value;
-        this.setState({
-            books: stateCopy,
-            currentlyReading: stateCopy.filter((book) => book.shelf==='currentlyReading'),
-            read: stateCopy.filter((book) => book.shelf==='read'),
-            wantToRead: stateCopy.filter((book) => book.shelf==='wantToRead')
-        });
+
         // BooksAPI.getAll().then((books) => {
         //     this.setState({ books });
         //     // console.log(books);
@@ -99,7 +134,7 @@ class BooksApp extends React.Component {
     }
 
   render() {
-      const { query,books,read,wantToRead,currentlyReading } = this.state;
+      const { query,books,read,wantToRead,currentlyReading,queryBooks } = this.state;
 
       let showingBooks;
       if(query){
@@ -138,8 +173,12 @@ class BooksApp extends React.Component {
 
               </div>
               <ListBooks
-                books={ showingBooks ? showingBooks : [] }
-                query={ query}
+                // books={ showingBooks ? showingBooks : [] }
+                  queryBooks={ queryBooks }
+                query={ query }
+                updateAppState={() => this.updateAppState()}
+                handleInputChange ={this.handleInputChange}
+
               />
             </div>
 

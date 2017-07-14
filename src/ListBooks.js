@@ -7,8 +7,9 @@ import * as BooksAPI from './BooksAPI'
 
 class ListBooks extends Component {
     static propTypes = {
-        books: PropTypes.array.isRequired
+        queryBooks: PropTypes.array.isRequired
         // onDeleteBook: PropTypes.func.isRequired
+        // updateAppState: PropTypes.func.isRequired
     }
     state = {
         showNoResults : false
@@ -16,7 +17,7 @@ class ListBooks extends Component {
 
     componentDidMount(){
 
-          if(this.props.books.length <= 0){
+          if(this.props.queryBooks.length <= 0){
               this.setState({ showNoResults: true})
         }
     }
@@ -25,8 +26,8 @@ class ListBooks extends Component {
 
     render(){
 
-        const { books } = this.props;
-        const { query } = this.props;
+        const { queryBooks, query ,handleInputChange } = this.props;
+
         const  { showNoResults } = this.state;
 
 
@@ -35,7 +36,7 @@ class ListBooks extends Component {
             <div className="list-books">
 
                 {
-                    (query.length > 0 && books.length > 0 )  && (
+                    (query.length > 0 && queryBooks.length > 0 )  && (
                     <div>
                     <div className="list-books-title">
                         <h1>Add Book</h1>
@@ -47,25 +48,31 @@ class ListBooks extends Component {
                     <h2 className="bookshelf-title">Available</h2>
                     <div className="bookshelf-books">
                     <ol className="books-grid">
-                {books.map((book) => (
-                    <li key={book.id} className='contact-list-item'>
-                    <div className="book">
-                    <div className="book-top">
-                    <div className="book-cover" style={{ width: 128, height: 192, backgroundImage:`url(${book ? book.imageLinks.thumbnail : 'null'})`}}></div>
-                    <div className="book-shelf-changer">
-                    <select>
-                    <option value="none" disabled>Move to...</option>
-                    <option value="currentlyReading">Currently Reading</option>
-                    <option value="wantToRead">Want to Read</option>
-                    <option value="read">Read</option>
-                    <option value="none">None</option>
-                    </select>
+                {queryBooks.map((book) => (
+                    <div key={book.id}>
+                        <li  className='contact-list-item'>
+                        <div className="book">
+                        <div className="book-top">
+                        <div className="book-cover" style={{ width: 128, height: 192, backgroundImage:`url(${book ? book.imageLinks.thumbnail : 'null'})`}}></div>
+                        <div className="book-shelf-changer">
+                        <select
+                            name={book.id}
+                            onChange={handleInputChange}
+                            value={`${book.shelf}`}
+                        >
+                        <option value="none" disabled>Move to...</option>
+                        <option value="currentlyReading">Currently Reading</option>
+                        <option value="wantToRead">Want to Read</option>
+                        <option value="read">Read</option>
+                        <option value="none">None</option>
+                        </select>
+                        </div>
+                        </div>
+                        <div className="book-title">{book.title}</div>
+                        <div className="book-authors"></div>
+                        </div>
+                        </li>
                     </div>
-                    </div>
-                    <div className="book-title">{book.title}</div>
-                    <div className="book-authors"></div>
-                    </div>
-                    </li>
                     ))}
                     </ol>
                     </div>
