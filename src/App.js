@@ -18,6 +18,7 @@ class BooksApp extends React.Component {
   componentDidMount() {
       BooksAPI.getAll().then((books) => {
           this.setState({
+              books:books,
               currentlyReading: books.filter((book) => book.shelf==='currentlyReading'),
               read: books.filter((book) => book.shelf==='read'),
               wantToRead: books.filter((book) => book.shelf==='wantToRead')
@@ -52,22 +53,49 @@ class BooksApp extends React.Component {
         window.history.back();
     }
 
+    // const add = x => y => y + x;
+    // shelfPicker = shelf =>   {
+    //
+    // BooksAPI.update(`${shelf}`.filter((book) => book.id ===  name),value)
+    //   .then((res) => console.log(res,'hahha'))
+    //
+    // }
+
     handleInputChange = (event) => {
         const target = event.target;
         const value = event.target.value;
         const name = target.name;
         console.log(target,value,name,);
-        BooksAPI.update(this.state.books.filter((book) => book.id ===  name),value)
-            .then((res) => console.log(res,'hahha'))
-        console.log(this.state.books.filter((book) => book.id ===  name))
+        //make a function that returns a funtion that will use the shelf type
+        // BooksAPI.update((this.state.books.filter((book) => book.id ===  name)),value)
+        //     .then((res) => console.log(res,'hahha'))
+        // console.log(this.state.books.filter((book) => book.id ===  name))
+
+        // let stateCopy = Object.assign({}, this.state.books);
+        console.log(this.state.read)
+        let stateCopy = this.state.books.map(book => book.id === name ?
+            // transform the book with a matching id
+            { ...book, shelf: value } :
+            // otherwise return original book
+            book
+        );
+        console.log(stateCopy,"cheese")
+        // stateCopy.books[name] = Object.assign({}, stateCopy.books[name]);
+        // stateCopy.books[name].shelf = value;
+        this.setState({
+            books: stateCopy,
+            currentlyReading: stateCopy.filter((book) => book.shelf==='currentlyReading'),
+            read: stateCopy.filter((book) => book.shelf==='read'),
+            wantToRead: stateCopy.filter((book) => book.shelf==='wantToRead')
+        });
         // BooksAPI.getAll().then((books) => {
         //     this.setState({ books });
         //     // console.log(books);
         // });
-        this.setState({
-            [name]: value
-
-        });
+        // this.setState({
+        //     [name]: value
+        //
+        // });
     }
 
   render() {
@@ -127,12 +155,8 @@ class BooksApp extends React.Component {
                   <h2 className="bookshelf-title">Currently Reading</h2>
                   <div className="bookshelf-books">
                     <ol className="books-grid">
-                      <h1> {'wanna'}</h1>
-                        {`${"this.state."+"bubbly"+""}`}
                         {currentlyReading.map((book) => (
                             <div key={book.id}>
-                                {`${"this.state."+[book.id]+""}`}
-
                               <li>
                                 <div className="book">
                                   <div className="book-top">
@@ -141,7 +165,7 @@ class BooksApp extends React.Component {
                                       <select
                                           name={book.id}
                                           onChange={this.handleInputChange}
-                                          value={`${"this.state."+[book.id]+""}`}
+                                          value={`${book.shelf}`}
                                       >
                                         <option value="none" disabled>Move to...</option>
                                         <option value="currentlyReading">Currently Reading</option>
@@ -171,7 +195,11 @@ class BooksApp extends React.Component {
                                   <div className="book-top">
                                     <div className="book-cover" style={{ width: 128, height: 188, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
                                     <div className="book-shelf-changer">
-                                      <select onChange={this.handleInputChange}>
+                                      <select
+                                          name={book.id}
+                                          onChange={this.handleInputChange}
+                                          value={`${book.shelf}`}
+                                      >
                                         <option value="none" disabled>Move to...</option>
                                         <option value="currentlyReading">Currently Reading</option>
                                         <option value="wantToRead">Want to Read</option>
@@ -200,7 +228,12 @@ class BooksApp extends React.Component {
                                   <div className="book-top">
                                     <div className="book-cover" style={{ width: 128, height: 188, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
                                     <div className="book-shelf-changer">
-                                      <select>
+                                      <select
+                                          name={book.id}
+                                          onChange={this.handleInputChange}
+                                          value={`${book.shelf}`}
+
+                                      >
                                         <option value="none" disabled>Move to...</option>
                                         <option value="currentlyReading">Currently Reading</option>
                                         <option value="wantToRead">Want to Read</option>
