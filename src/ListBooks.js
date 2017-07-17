@@ -12,13 +12,15 @@ class ListBooks extends Component {
         // updateAppState: PropTypes.func.isRequired
     }
     state = {
-        showNoResults : false
+        showNoResults : false,
+        searchUpdate: true
     }
 
     componentDidMount(){
 
           if(this.props.queryBooks.length <= 0){
               this.setState({ showNoResults: true})
+
         }
     }
 
@@ -29,6 +31,9 @@ class ListBooks extends Component {
         const { queryBooks, query ,handleInputChange } = this.props;
 
         const  { showNoResults } = this.state;
+
+
+
 
 
         return (
@@ -84,7 +89,7 @@ class ListBooks extends Component {
                 }
 
                 {
-                    (showNoResults && query) && (
+                    (showNoResults && query.length <= 0) && (
                     <div>
                      <h1>No Results Found</h1>
 

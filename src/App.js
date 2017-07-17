@@ -13,7 +13,8 @@ class BooksApp extends React.Component {
       currentlyReading:[],
       read:[],
       wantToRead:[],
-      query: ''
+      query: '',
+      searchUpdate:false
   }
 
   componentDidMount() {
@@ -22,7 +23,8 @@ class BooksApp extends React.Component {
               books:books,
               currentlyReading: books.filter((book) => book.shelf==='currentlyReading'),
               read: books.filter((book) => book.shelf==='read'),
-              wantToRead: books.filter((book) => book.shelf==='wantToRead')
+              wantToRead: books.filter((book) => book.shelf==='wantToRead'),
+              searchUpdate: false
           });
           // console.log(books);
       });
@@ -30,10 +32,35 @@ class BooksApp extends React.Component {
 
     updateQuery = (query) => {
         this.setState({ query: query.trim() })
-        BooksAPI.search(query.trim(),10).then((books) => {
+        let rawSearchToState;
 
-            this.setState({ queryBooks:books });
-            console.log(books);
+        BooksAPI.search(query.trim(),5).then((books) => {
+          console.log(this.state.queryBooks,'query books has some value')
+
+            rawSearchToState = books.map(book => {
+
+
+                   if( JSON.stringify(this.state.books).indexOf(JSON.stringify(book.id)) > -1 ){
+                        // newSearch.concat(this.state.queryBooks.filter(_book => _book.id === this.state.books[x].id ));
+                       // newSearch.concat({ ...book, shelf:this.state.books[x].shelf})
+                       //  this.setState({ queryBooks: newSearch })
+                       console.log('mi getting caled in if',book);
+                       return {...book, shelf: 'testing'};
+
+                       // return "x";
+
+                   }else{
+                     return  book;
+                   }
+  
+                // return newSearch;
+              }
+
+            );
+            this.setState({ queryBooks:rawSearchToState});
+            console.log(rawSearchToState,"raw search was filled here")
+            // this.setState({ queryBooks:books });
+            console.log(books,'called updatr query', query.trim());
 
         });
     }
@@ -106,6 +133,11 @@ class BooksApp extends React.Component {
             })
           });
 
+          console.log(stateCopy[0],"this is the statecopy",value, "this is the value");
+
+          //    need to update the search query api
+              BooksAPI.update(stateCopy[0],value)
+                .then((res) => console.log(res,'hahha'))
 
       }else {
            stateCopy = this.state.books.map(book => book.id === name ?
@@ -116,10 +148,13 @@ class BooksApp extends React.Component {
           );
 
           this.setState({
-              books: stateCopy,
-              currentlyReading: stateCopy.filter((book) => book.shelf==='currentlyReading'),
-              read: stateCopy.filter((book) => book.shelf==='read'),
-              wantToRead: stateCopy.filter((book) => book.shelf==='wantToRead')
+              books: stateCopy
+              }, () => {
+              this.setState({
+                  currentlyReading: stateCopy.filter((book) => book.shelf === 'currentlyReading'),
+                  read: stateCopy.filter((book) => book.shelf === 'read'),
+                  wantToRead: stateCopy.filter((book) => book.shelf === 'wantToRead')
+              })
           });
       }
         console.log(stateCopy,"cheese")
@@ -136,8 +171,12 @@ class BooksApp extends React.Component {
         // });
     }
 
+
+
   render() {
       const { query,books,read,wantToRead,currentlyReading,queryBooks } = this.state;
+
+
 
       let showingBooks;
       if(query){
@@ -145,6 +184,7 @@ class BooksApp extends React.Component {
           match ? console.log(match, 'this the match') : console.log('match fail')
           try {
               showingBooks = books.filter((book) => match.test(book.title)  );
+
           }
           catch(err) {
             showingBooks=[];
@@ -181,6 +221,7 @@ class BooksApp extends React.Component {
                 query={ query }
                 updateAppState={() => this.updateAppState()}
                 handleInputChange ={this.handleInputChange}
+
 
               />
             </div>
