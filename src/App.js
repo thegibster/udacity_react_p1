@@ -32,32 +32,57 @@ class BooksApp extends React.Component {
 
     updateQuery = (query) => {
         this.setState({ query: query.trim() })
-        let rawSearchToState;
-
+        let rawSearchToState=[];
+        let searchArrayWithState=[];
         BooksAPI.search(query.trim(),5).then((books) => {
           console.log(this.state.queryBooks,'query books has some value')
 
-            rawSearchToState = books.map(book => {
+            // searchArrayWithState = books;
+          rawSearchToState = books;
+
+            // rawSearchToState = a.concat(b.filter(function (item) {
+            //     return a.indexOf(item) < 0;
+            // }));
+
+            books.map(book => {
+
+                    console.log(`the check: ${(this.state.books).map(bookie => bookie.id == book.id)}`)
+                //    if( JSON.stringify(this.state.books).indexOf(JSON.stringify(book.id)) > -1 ){
+                //         // newSearch.concat(this.state.queryBooks.filter(_book => _book.id === this.state.books[x].id ));
+                //        // newSearch.concat({ ...book, shelf:this.state.books[x].shelf})
+                //        //  this.setState({ queryBooks: newSearch })
+                //
+                //
+                //        // console.log('mi getting caled in if',book);
+                //        // searchArrayWithState.splice((JSON.stringify(searchArrayWithState).indexOf(JSON.stringify(book.id))),1);
+                //        // console.log(`Search array length is now ${searchArrayWithState.length}`);
+                //        // return {...book, shelf: 'testing'};
+                //
+                //        // return "x";
+                //        rawSearchToState.push( this.state.books[JSON.stringify(this.state.books).indexOf(JSON.stringify(book.id))])
+                //
+                //    }else{
+                //        rawSearchToState.push(book)
+                //
+                //    }
+                //
+                // // return newSearch;
+                // return rawSearchToState;
+
+                this.state.books.map(bookie => {
+
+                    if (bookie.id == book.id) {
+                        rawSearchToState.splice(rawSearchToState.indexOf(book),1)
+                        rawSearchToState.push(bookie);
+                    }
+
+                })
 
 
-                   if( JSON.stringify(this.state.books).indexOf(JSON.stringify(book.id)) > -1 ){
-                        // newSearch.concat(this.state.queryBooks.filter(_book => _book.id === this.state.books[x].id ));
-                       // newSearch.concat({ ...book, shelf:this.state.books[x].shelf})
-                       //  this.setState({ queryBooks: newSearch })
-                       console.log('mi getting caled in if',book);
-                       return {...book, shelf: 'testing'};
-
-                       // return "x";
-
-                   }else{
-                     return  book;
-                   }
-  
-                // return newSearch;
               }
 
             );
-            this.setState({ queryBooks:rawSearchToState});
+            this.setState({ queryBooks:rawSearchToState });
             console.log(rawSearchToState,"raw search was filled here")
             // this.setState({ queryBooks:books });
             console.log(books,'called updatr query', query.trim());
