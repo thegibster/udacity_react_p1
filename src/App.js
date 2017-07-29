@@ -129,6 +129,8 @@ class BooksApp extends React.Component {
         const target = event.target;
         const value = event.target.value;
         const name = target.name;
+        let rawSearchToState=[];
+        let updatedBookShelf;
         console.log(target,value,name,);
         //make a function that returns a funtion that will use the shelf type
         // BooksAPI.update((this.state.books.filter((book) => book.id ===  name)),value)
@@ -148,7 +150,7 @@ class BooksApp extends React.Component {
           );
 
           this.setState({
-              //add code to combine the seach array to the state of the app
+
               books: this.state.books.concat(stateCopy)
           }, () => {
             this.setState({
@@ -182,6 +184,7 @@ class BooksApp extends React.Component {
               })
           });
       }
+
         console.log(stateCopy,"cheese")
         // stateCopy.books[name] = Object.assign({}, stateCopy.books[name]);
         // stateCopy.books[name].shelf = value;
@@ -194,6 +197,55 @@ class BooksApp extends React.Component {
         //     [name]: value
         //
         // });
+
+
+
+        // refactor this code to be used in this function as well as the updateQuery function
+        //also use the get funciton of the BookApi to issue an update
+        rawSearchToState = this.state.queryBooks;
+        this.state.queryBooks.map(book => {
+
+                console.log(`the check: ${(this.state.books).map(bookie => bookie.id == book.id)}`)
+                //    if( JSON.stringify(this.state.books).indexOf(JSON.stringify(book.id)) > -1 ){
+                //         // newSearch.concat(this.state.queryBooks.filter(_book => _book.id === this.state.books[x].id ));
+                //        // newSearch.concat({ ...book, shelf:this.state.books[x].shelf})
+                //        //  this.setState({ queryBooks: newSearch })
+                //
+                //
+                //        // console.log('mi getting caled in if',book);
+                //        // searchArrayWithState.splice((JSON.stringify(searchArrayWithState).indexOf(JSON.stringify(book.id))),1);
+                //        // console.log(`Search array length is now ${searchArrayWithState.length}`);
+                //        // return {...book, shelf: 'testing'};
+                //
+                //        // return "x";
+                //        rawSearchToState.push( this.state.books[JSON.stringify(this.state.books).indexOf(JSON.stringify(book.id))])
+                //
+                //    }else{
+                //        rawSearchToState.push(book)
+                //
+                //    }
+                //
+                // // return newSearch;
+                // return rawSearchToState;
+
+             updatedBookShelf = this.state.queryBooks.map(book => book.id === name ?
+                // transform the book with a matching id
+                { ...book, shelf: value } :
+                // otherwise return original book
+                book
+
+            );
+
+
+            }
+
+        );
+        this.setState({ queryBooks:updatedBookShelf },() => {
+            this.forceUpdate();
+        });
+
+
+        //end of ending the refactoring code
     }
 
 
