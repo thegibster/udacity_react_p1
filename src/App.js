@@ -201,7 +201,7 @@ class BooksApp extends React.Component {
                             // books={ showingBooks ? showingBooks : [] }
                             queryBooks={ queryBooks }
                             query={ query }
-                            handleInputChange ={this.handleInputChange}
+                            handleInputChange={this.handleInputChange}
                         />
                     </div>
 
