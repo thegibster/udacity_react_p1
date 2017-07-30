@@ -20,7 +20,7 @@ class BooksApp extends React.Component {
     componentDidMount() {
         BooksAPI.getAll().then((books) => {
             this.setState({
-                books:books,
+                books:books, //Break the books array in three state variables for cleaner mapping later on
                 currentlyReading: books.filter((book) => book.shelf==='currentlyReading'),
                 read: books.filter((book) => book.shelf==='read'),
                 wantToRead: books.filter((book) => book.shelf==='wantToRead'),
@@ -31,87 +31,81 @@ class BooksApp extends React.Component {
 
     updateQuery = (query) => {
         if (query.length > 0) {
-            this.setState({query: query.trim()})
+            this.setState({query: query.trim()});
             let rawSearchToState = [];
             BooksAPI.search(query.trim(), 5).then((books) => {
-                console.log(this.state.queryBooks, 'query books has some value')
-
+                // console.log(this.state.queryBooks, 'query books has some value')
                 rawSearchToState = books;
-
+                //books here is referring to the return value from the BooksApi.search action
                 books.map(book => {
-
-                        // console.log(`the check: ${(this.state.books).map(bookie => bookie.id == book.id)}`)
-
-
                         this.state.books.map(bookie => {
-
-                            if (bookie.id == book.id) {
-                                rawSearchToState.splice(rawSearchToState.indexOf(book), 1)
+                            if (bookie.id == book.id) {//If there is a book matching in both search array and state.books array, replace the search book value with the currently updated book state
+                                rawSearchToState.splice(rawSearchToState.indexOf(book), 1);
                                 rawSearchToState.push(bookie);
                             }
                         })
                     }
                 );
                 this.setState({queryBooks: rawSearchToState});
-                console.log(rawSearchToState, "raw search was filled here")
-                // this.setState({ queryBooks:books });
-                console.log(books, 'called updatr query', query.trim());
-
             });
         }else{
             this.setState({query: query.trim()});
         }
-    }
+    };
 
     goBack = () => {
         this.setState({
             query:''
         })
         window.history.back();
-    }
-
-
-
+    };
 
     handleInputChange = (event) => {
         const target = event.target;
         const value = event.target.value;
         const name = target.name;
-        let updatedBookShelf;
-        // console.log(target,value,name,);
 
+        let updatedBookShelf;
         let stateCopy;
+
         if(this.state.query.length >0){
             stateCopy = this.state.queryBooks.filter((book) => book.id === name).map(book => book.id === name ?
-                // transform the book with a matching id
                 { ...book, shelf: value } :
-                // otherwise return original book
                 book
 
             );
-
-            this.setState({
-
-                books: this.state.books.concat(stateCopy)
-            }, () => {
+            let checkIfSearchBookExist = this.state.books.filter((book) => book.id === stateCopy[0].id);
+            if(checkIfSearchBookExist.length >0){
+                let stateWithoutPrevShelf = this.state.books.filter((book) => book.id !== stateCopy[0].id);
                 this.setState({
-                    currentlyReading: this.state.books.filter((book) => book.shelf==='currentlyReading'),
-                    read: this.state.books.filter((book) => book.shelf==='read'),
-                    wantToRead: this.state.books.filter((book) => book.shelf==='wantToRead')
-                })
-            });
+                    books: stateWithoutPrevShelf.concat(stateCopy)
+                }, () => {
+                    this.setState({
+                        currentlyReading: this.state.books.filter((book) => book.shelf==='currentlyReading'),
+                        read: this.state.books.filter((book) => book.shelf==='read'),
+                        wantToRead: this.state.books.filter((book) => book.shelf==='wantToRead')
+                    })
+                });
 
-            console.log(stateCopy[0],"this is the statecopy",value, "this is the value");
+            }else{
+                this.setState({
+                    books: this.state.books.concat(stateCopy)
+                }, () => {
+                    this.setState({
+                        currentlyReading: this.state.books.filter((book) => book.shelf==='currentlyReading'),
+                        read: this.state.books.filter((book) => book.shelf==='read'),
+                        wantToRead: this.state.books.filter((book) => book.shelf==='wantToRead')
+                    })
+                });
+            }
 
-            //    need to update the search query api
+            // console.log(stateCopy[0],"this is the statecopy",value, "this is the value");
             BooksAPI.update(stateCopy[0],value)
-                .then((res) => console.log(res,'hahha'))
+                .then((res) => console.log(res,'hahha'));
 
         }else {
             stateCopy = this.state.books.map(book => book.id === name ?
-                // transform the book with a matching id
                 { ...book, shelf: value } :
-                // otherwise return original book
                 book
             );
 
@@ -126,35 +120,14 @@ class BooksApp extends React.Component {
             });
         }
 
-        // console.log(stateCopy,"cheese")
 
-
-
-
-        // refactor this code to be used in this function as well as the updateQuery function
-        //also use the get funciton of the BookApi to issue an update
-
-        this.state.queryBooks.map(book => {
-
-                //console.log(`the check: ${(this.state.books).map(bookie => bookie.id == book.id)}`)
-
-
-                updatedBookShelf = this.state.queryBooks.map(book => book.id === name ?
-                    // transform the book with a matching id
-                    { ...book, shelf: value } :
-                    // otherwise return original book
-                    book
-
-                );
-
-            }
+        updatedBookShelf = this.state.queryBooks.map(book => book.id === name ?
+            { ...book, shelf: value } :
+            book
 
         );
-        this.setState({ queryBooks:updatedBookShelf },() => {
-            this.forceUpdate();
-        });
-
-    }
+        this.setState({ queryBooks:updatedBookShelf });
+    };
 
 
     render() {
@@ -163,21 +136,21 @@ class BooksApp extends React.Component {
 
         if(query){
             const match =  new RegExp(escapeRegExp(query), 'i');
-            match ? console.log(match, 'this the match') : console.log('match fail')
+            // match ? console.log(match, 'this the match') : console.log('match fail')
+            // Console used to output the match to ensure the regular expression is hitting
             try {
-                showingBooks = books.filter((book) => match.test(book.title)  );
-
+                showingBooks = books.filter((book) => match.test(book.title));
             }
             catch(err) {
                 showingBooks=[];
             }
-            console.log('true query',showingBooks)
         }else {
             showingBooks = books;
         }
 
-        {(query.length > 0 && showingBooks.length>0) && (showingBooks.sort(sortBy('name','author')))}
-
+        {
+            (query.length > 0 && showingBooks.length>0) && (showingBooks.sort(sortBy('name','author')));
+        }
 
         return (
             <div className="app">

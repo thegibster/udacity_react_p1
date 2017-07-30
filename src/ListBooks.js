@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-
 class ListBooks extends Component {
     static propTypes = {
         queryBooks: PropTypes.array.isRequired
@@ -13,15 +12,13 @@ class ListBooks extends Component {
 
     componentDidMount(){
         if(this.props.queryBooks.length <= 0){
-            this.setState({ showNoResults: true})
+            this.setState({ showNoResults: true});
         }
     }
-
 
     render(){
         const { queryBooks, query ,handleInputChange } = this.props;
         const  { showNoResults } = this.state;
-
 
         return (
 
