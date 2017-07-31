@@ -34,10 +34,9 @@ class BooksApp extends React.Component {
             this.setState({query: query.trim()});
             let rawSearchToState = [];
             BooksAPI.search(query.trim(), 5).then((books) => {
-                // console.log(this.state.queryBooks, 'query books has some value')
                 rawSearchToState = books;
                 //books here is referring to the return value from the BooksApi.search action
-                if(books.length >0){
+                if(books.length >0 && !(books.error)){
                     books.map(book => {
                             this.state.books.map(bookie => {
                                 if (bookie.id == book.id) {//If there is a book matching in both search array and state.books array, replace the search book value with the currently updated book state
@@ -47,6 +46,8 @@ class BooksApp extends React.Component {
                             })
                         }
                     );
+                }else{
+                    rawSearchToState=[];
                 }
                 this.setState({queryBooks: rawSearchToState});
             });

@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 
 class ListBooks extends Component {
     static propTypes = {
-        queryBooks: PropTypes.array.isRequired
+        queryBooks: PropTypes.array.isRequired,
+        handleInputChange: PropTypes.func.isRequired
     }
     state = {
         showNoResults : false,
@@ -25,7 +26,7 @@ class ListBooks extends Component {
             <div className="list-books">
 
                 {
-                    (query.length > 0 && queryBooks.length > 0 )  && (
+                    (query.length > 0 && queryBooks.length >= 1 )  && (
                         <div>
                             <div className="list-books-title">
                                 <h1>Add Book</h1>
@@ -73,9 +74,9 @@ class ListBooks extends Component {
                 }
 
                 {
-                    (showNoResults && query.length <= 0) && (
+                    (showNoResults && queryBooks.length <= 0) && (
                         <div>
-                            <h1>Please Enter a Search Query</h1>
+                            <h1>Please Enter a Valid Search Query</h1>
 
                         </div>
                     )
