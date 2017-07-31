@@ -42,7 +42,7 @@ class ListBooks extends Component {
                                                         <li  className='contact-list-item'>
                                                             <div className="book">
                                                                 <div className="book-top">
-                                                                    <div className="book-cover" style={{ width: 128, height: 192, backgroundImage:`url(${book ? book.imageLinks.thumbnail : 'null'})`}}></div>
+                                                                    <div className="book-cover" style={{ width: 128, height: 192, backgroundImage:`url(${book.imageLinks.thumbnail ? book.imageLinks.thumbnail : 'http://nzbodyworkepinc.weebly.com/uploads/1/8/6/1/18617822/8474511.jpg?123'})`}}></div>
                                                                     <div className="book-shelf-changer">
                                                                         <select
                                                                             name={book.id}
@@ -75,7 +75,7 @@ class ListBooks extends Component {
                 {
                     (showNoResults && query.length <= 0) && (
                         <div>
-                            <h1>No Results Found</h1>
+                            <h1>Please Enter a Search Query</h1>
 
                         </div>
                     )
