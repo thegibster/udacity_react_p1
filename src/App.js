@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, Link  } from 'react-router-dom';
 import ListBooks from './ListBooks';
+import BookShelf from './BookShelf';
 import escapeRegExp from 'escape-string-regexp';
 import sortBy from 'sort-by';
 import * as BooksAPI from './BooksAPI';
@@ -10,9 +11,6 @@ class BooksApp extends React.Component {
     state = {
         books: [],
         queryBooks:[],
-        currentlyReading:[],
-        read:[],
-        wantToRead:[],
         query: '',
         searchUpdate:false
     }
@@ -134,7 +132,10 @@ class BooksApp extends React.Component {
 
 
     render() {
-        const { query,books,read,wantToRead,currentlyReading,queryBooks } = this.state;
+        const { query,books,queryBooks } = this.state;
+        const wantToRead = books.filter(book => book.shelf === 'wantToRead');
+        const currentlyReading = books.filter(book => book.shelf === 'currentlyReading');
+        const read = books.filter(book => book.shelf === 'read');
         let showingBooks;
 
         if(query){
@@ -191,103 +192,24 @@ class BooksApp extends React.Component {
                             <div>
                                 <div className="bookshelf">
                                     <h2 className="bookshelf-title">Currently Reading</h2>
-                                    <div className="bookshelf-books">
-                                        <ol className="books-grid">
-                                            {currentlyReading.map((book) => (
-                                                <div key={book.id}>
-                                                    <li>
-                                                        <div className="book">
-                                                            <div className="book-top">
-                                                                <div className="book-cover" style={{ width: 128, height: 188, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
-                                                                <div className="book-shelf-changer">
-                                                                    <select
-                                                                        name={book.id}
-                                                                        onChange={this.handleInputChange}
-                                                                        value={`${book.shelf}`}
-                                                                    >
-                                                                        <option value="none" disabled>Move to...</option>
-                                                                        <option value="currentlyReading">Currently Reading</option>
-                                                                        <option value="wantToRead">Want to Read</option>
-                                                                        <option value="read">Read</option>
-                                                                        <option value="none">None</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div className="book-title">{book.title}</div>
-                                                            <div className="book-authors">{book.authors}</div>
-                                                        </div>
-                                                    </li>
-                                                </div>
-                                            ))}
-                                        </ol>
-                                    </div>
+                                    <BookShelf
+                                        books={currentlyReading}
+                                        handleInputChange={this.handleInputChange}
+                                    />
                                 </div>
                                 <div className="bookshelf">
                                     <h2 className="bookshelf-title">Want to Read</h2>
-                                    <div className="bookshelf-books">
-                                        <ol className="books-grid">
-                                            {wantToRead.map((book) => (
-                                                <div key={book.id}>
-                                                    <li>
-                                                        <div className="book">
-                                                            <div className="book-top">
-                                                                <div className="book-cover" style={{ width: 128, height: 188, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
-                                                                <div className="book-shelf-changer">
-                                                                    <select
-                                                                        name={book.id}
-                                                                        onChange={this.handleInputChange}
-                                                                        value={`${book.shelf}`}
-                                                                    >
-                                                                        <option value="none" disabled>Move to...</option>
-                                                                        <option value="currentlyReading">Currently Reading</option>
-                                                                        <option value="wantToRead">Want to Read</option>
-                                                                        <option value="read">Read</option>
-                                                                        <option value="none">None</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div className="book-title">{book.title}</div>
-                                                            <div className="book-authors">{book.authors}</div>
-                                                        </div>
-                                                    </li>
-                                                </div>
-                                            ))}
-                                        </ol>
-                                    </div>
+                                    <BookShelf
+                                        books={wantToRead}
+                                        handleInputChange={this.handleInputChange}
+                                    />
                                 </div>
                                 <div className="bookshelf">
                                     <h2 className="bookshelf-title">Read</h2>
-                                    <div className="bookshelf-books">
-                                        <ol className="books-grid">
-                                            {read.map((book) => (
-                                                <div key={book.id}>
-                                                    <li>
-                                                        <div className="book">
-                                                            <div className="book-top">
-                                                                <div className="book-cover" style={{ width: 128, height: 188, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
-                                                                <div className="book-shelf-changer">
-                                                                    <select
-                                                                        name={book.id}
-                                                                        onChange={this.handleInputChange}
-                                                                        value={`${book.shelf}`}
-
-                                                                    >
-                                                                        <option value="none" disabled>Move to...</option>
-                                                                        <option value="currentlyReading">Currently Reading</option>
-                                                                        <option value="wantToRead">Want to Read</option>
-                                                                        <option value="read">Read</option>
-                                                                        <option value="none">None</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div className="book-title">{book.title}</div>
-                                                            <div className="book-authors">{book.authors}</div>
-                                                        </div>
-                                                    </li>
-                                                </div>
-                                            ))}
-                                        </ol>
-                                    </div>
+                                    <BookShelf
+                                        books={read}
+                                        handleInputChange={this.handleInputChange}
+                                    />
                                 </div>
                             </div>
                         </div>

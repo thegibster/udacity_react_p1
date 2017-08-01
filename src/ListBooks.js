@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
+import Select from './Select';
 class ListBooks extends Component {
     static propTypes = {
         queryBooks: PropTypes.array.isRequired,
@@ -45,17 +45,11 @@ class ListBooks extends Component {
                                                                 <div className="book-top">
                                                                     <div className="book-cover" style={{ width: 128, height: 192, backgroundImage:`url(${book.imageLinks.thumbnail ? book.imageLinks.thumbnail : 'http://nzbodyworkepinc.weebly.com/uploads/1/8/6/1/18617822/8474511.jpg?123'})`}}></div>
                                                                     <div className="book-shelf-changer">
-                                                                        <select
+                                                                        <Select
                                                                             name={book.id}
                                                                             onChange={handleInputChange}
                                                                             value={`${book.shelf}`}
-                                                                        >
-                                                                            <option value="none" disabled>Move to...</option>
-                                                                            <option value="currentlyReading">Currently Reading</option>
-                                                                            <option value="wantToRead">Want to Read</option>
-                                                                            <option value="read">Read</option>
-                                                                            <option value="none">None</option>
-                                                                        </select>
+                                                                        />
                                                                     </div>
                                                                 </div>
                                                                 <div className="book-title">{book.title}</div>
